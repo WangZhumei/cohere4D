@@ -224,3 +224,141 @@ video { display: block; width: 100%; height: 100%; object-fit: contain; }
   .ablation-item { margin-top: 28px; }
   .ablation-item + .ablation-item { margin-top: 42px; }
 }
+
+/* Blue, cyan, and violet visual theme. */
+:root {
+  --ink: #16274a;
+  --muted: #5c6b87;
+  --paper: #f6f8ff;
+  --accent: #3865e8;
+  --blue-light: #7ad2ff;
+}
+
+body {
+  background-color: var(--paper);
+  background-image: linear-gradient(90deg, #edf6ff, #f9faff 42%, #f9f8ff 65%, #f1edff);
+  background-size: 100% 100%;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+
+::selection { background: #d9dfff; color: #243c81; }
+button:focus-visible, a:focus-visible { outline-color: #6577f2; }
+
+/* The existing opening receives a deeper blue / violet light treatment. */
+.js .intro {
+  background:
+    radial-gradient(ellipse at 25% 34%, #1554ae55, transparent 53%),
+    radial-gradient(ellipse at 78% 55%, #6743b444, transparent 51%),
+    radial-gradient(ellipse at 50% 100%, #087ca83d, transparent 57%),
+    linear-gradient(145deg, #050b1c, #0b1631);
+}
+.js .intro-grid {
+  background-image: linear-gradient(#78baff1c 1px, transparent 1px), linear-gradient(90deg, #78baff1c 1px, transparent 1px);
+}
+.orbit { border-color: #91c7ff32; box-shadow: 0 0 28px #4f93ff0d; }
+.orbit-two { border-color: #a49af32b; box-shadow: 0 0 28px #a088ff0d; }
+.intro-caption { color: #bdcfee; text-shadow: 0 0 24px #78a6ff1a; }
+.js .hero-brand { color: #f1f6ff; text-shadow: 0 0 55px #599aff30; }
+.hero-brand > span { color: #92c8ff; text-shadow: none; }
+.paper-wordmark { color: #14264c; text-shadow: 0 5px 24px #5f84d514; }
+.paper-wordmark > span { color: #426ce5; text-shadow: none; }
+.paper-title { color: #243758; }
+.paper h2 { color: #3154a7; }
+.ablation-item h3 { color: #304676; }
+.abstract-section strong { color: #3159b8; }
+.authors a { color: #293c61; }
+.authors a:hover { color: #4e61df; text-decoration-color: #a28aee; }
+.affiliations { color: #5d6d8b; }
+
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  /* Negative tracking lets the D extend past its inline box. Extend the paint
+     area, then offset that space so wordmark width and centering stay the same. */
+  .hero-brand > span, .paper-wordmark > span {
+    padding-right: .12em;
+    margin-right: -.12em;
+  }
+  .hero-brand > span, .paper-wordmark > span, .paper h2, .footer-mark {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-brand > span { background-image: linear-gradient(115deg, #64e3ff 5%, #83aaff 49%, #b79aff 95%); }
+  .paper-wordmark > span { background-image: linear-gradient(115deg, #0784bd 5%, #4265e8 49%, #8651d1 95%); }
+  .paper h2 { background-image: linear-gradient(105deg, #203c70 20%, #345fd4 49%, #6b48b3 80%); }
+  .footer-mark { background-image: linear-gradient(110deg, #2f6aca, #795bc2); }
+}
+
+/* Border treatments use the existing border widths and spacing. */
+.resource-link {
+  color: #3755a2;
+  border-color: transparent;
+  background: linear-gradient(#ffffffed, #f2f5ffed) padding-box, linear-gradient(125deg, #91cffa, #b7b4ee) border-box;
+  box-shadow: 0 4px 16px #365dbb0e, inset 0 1px 0 #fff;
+}
+.resource-primary {
+  color: #fff;
+  background: linear-gradient(115deg, #2e76e8, #4b5edb 60%, #7055cc) padding-box, linear-gradient(115deg, #569bf5, #9b83ed) border-box;
+  box-shadow: 0 7px 24px #4667db29, inset 0 1px 0 #ffffff33;
+}
+.video-stage.is-docked, .reconstruction-viewer {
+  box-shadow: 0 20px 58px -24px #335baa35, 0 5px 22px -10px #8667ce26, 0 0 0 1px #a8bbef66;
+}
+.alignment-media {
+  border-color: #cbd7f1;
+  box-shadow: 0 9px 26px -15px #3b5ca638;
+}
+.alignment-ours .alignment-media {
+  border-color: #91aff4;
+  box-shadow: 0 9px 28px -13px #416de542, 0 0 0 1px #b2c4ff42;
+}
+.alignment-cell figcaption { color: #445578; }
+.alignment-ours figcaption { color: #3b60d5; }
+.reconstruction-inset { box-shadow: 0 5px 24px #18326338; }
+
+.case-thumbnail {
+  background: #ffffff80;
+  box-shadow: 0 3px 12px #4164a50a;
+}
+.case-thumbnail:hover { background-color: #eaf0ff; }
+.case-thumbnail[aria-pressed="true"] {
+  border-color: transparent;
+  background: linear-gradient(#f8faff, #f8faff) padding-box, linear-gradient(125deg, #42bbef, #5775ef 52%, #a379df) border-box;
+  box-shadow: 0 5px 18px #4d6cd52b;
+}
+.js .player-controls {
+  color: #eef5ff;
+  border-color: #adc6ff30;
+  background: linear-gradient(120deg, #10233ced, #202146ed);
+  box-shadow: 0 4px 18px #030c2433, inset 0 1px 0 #ffffff0a;
+}
+.icon-button:hover { background: #8dbbff26; }
+.play-prompt { background: linear-gradient(120deg, #173361f2, #333161f2); border-color: #b5cdff66; }
+.video-progress::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, #67d8ff, #a491ff) 0 0 / var(--played) 100% no-repeat, #7485a480;
+}
+.video-progress::-moz-range-track {
+  background: linear-gradient(90deg, #67d8ff, #a491ff) 0 0 / var(--played) 100% no-repeat, #7485a480;
+}
+.video-progress::-webkit-slider-thumb { box-shadow: 0 0 9px #7bd6ff66; }
+.video-progress::-moz-range-thumb { box-shadow: 0 0 9px #7bd6ff66; }
+.scroll-line { background: linear-gradient(90deg, #6bd8ff33, #a7a5ff99); }
+
+.citation-code {
+  color: #33477a;
+  border-color: #ced8f0;
+  background: linear-gradient(115deg, #eaf4ff, #f1edff);
+  box-shadow: inset 3px 0 0 #7395ef, 0 8px 30px -20px #546bc93b;
+}
+.opening-footer { border-top-color: #cbd5f0; color: #647698; }
+.back-to-top { color: #5367a6; }
+.back-to-top:hover { color: #684fc0; }
+
+@media (forced-colors: active) {
+  .hero-brand > span, .paper-wordmark > span, .paper h2, .footer-mark {
+    background: none;
+    color: CanvasText;
+    -webkit-text-fill-color: currentColor;
+  }
+}
