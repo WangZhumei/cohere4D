@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070d1b">
+  <title>COHERE4D — Coherent 4D Human–Scene Reconstruction</title>
+  <meta name="description" content="COHERE4D: Training-Free Metric Alignment for Coherent 4D Human–Scene Reconstruction. A coherent, metric 4D world from monocular video.">
+  <link rel="icon" href="video/teaser/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <script src="video-group.js" defer></script>
+  <script src="reconstruction.js" defer></script>
+  <script src="alignment.js" defer></script>
+  <script src="results.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#paper">Skip to paper</a>
+  <main>
+    <section class="opening" id="top" aria-label="COHERE4D project">
+      <div class="scene">
+        <div class="hero-backdrop" aria-hidden="true"></div>
+
+        <div class="intro" aria-hidden="true">
+          <div class="intro-grid"></div>
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+          <div class="intro-caption">
+            <p>Training-Free Metric Alignment for Coherent 4D Human–Scene Reconstruction</p>
+          </div>
+        </div>
+
+        <div class="hero-brand" aria-hidden="true">COHERE<span>4D</span></div>
+
+        <article class="paper" id="paper" aria-labelledby="paper-title">
+          <header class="paper-header">
+            <h1 id="paper-title"><span class="paper-wordmark">COHERE<span>4D</span></span><span class="paper-title">Training-Free Metric Alignment for<br class="desktop-break"> Coherent 4D Human–Scene Reconstruction</span></h1>
+            <div class="authors" aria-label="Authors">
+              <a href="https://wangzhumei.github.io/zhumeiwang/" target="_blank" rel="noopener noreferrer">Zhumei Wang<sup>1,2</sup></a>
+              <a href="https://taconite.github.io/" target="_blank" rel="noopener noreferrer">Shaofei Wang<sup>2</sup></a>
+              <a href="https://www.anxiangsir.com/" target="_blank" rel="noopener noreferrer">Xiang An<sup>3</sup></a>
+              <a href="https://peimingtao.github.io/" target="_blank" rel="noopener noreferrer">Mingtao Pei<sup>1</sup></a>
+              <a href="https://siyuanhuang.com/" target="_blank" rel="noopener noreferrer">Siyuan Huang<sup>2</sup></a>
+            </div>
+            <div class="affiliations" aria-label="Affiliations">
+              <span><sup>1</sup> Beijing Institute of Technology</span>
+              <span><sup>2</sup> State Key Laboratory of General Artificial Intelligence, BIGAI</span>
+              <span><sup>3</sup> MiniMax</span>
+            </div>
+            <nav class="paper-links" aria-label="Project resources">
+              <!-- Add href URLs and remove aria-disabled / tabindex when these resources are available. -->
+              <a class="resource-link resource-primary" role="link" aria-disabled="true" tabindex="0" title="Paper link coming soon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v6h5M9 13h6M9 17h6"/></svg>
+                Paper
+              </a>
+              <a class="resource-link" role="link" aria-disabled="true" tabindex="0" title="Code link coming soon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 20"/></svg>
+                Code
+              </a>
+            </nav>
+          </header>
+
+          <figure class="teaser" aria-label="COHERE4D teaser">
+            <div class="video-slot">
+              <!-- A single video stays mounted throughout the scroll transition, preserving playback. -->
+              <div class="video-stage" id="video-stage">
+                <video id="teaser-video" muted loop playsinline preload="auto" poster="video/teaser/poster.jpg" aria-label="COHERE4D teaser: monocular input and coherent 4D human–scene reconstruction" controls>
+                  <source src="video/teaser/teaser.mp4" type="video/mp4">
+                  Your browser does not support HTML video. <a href="video/teaser/teaser.mp4">Download the teaser.</a>
+                </video>
+                <button class="play-prompt" id="play-prompt" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg><span>Play teaser</span></button>
+                <p class="video-error" id="video-error" role="status" hidden>Unable to load the teaser. <a href="video/teaser/teaser.mp4">Open video directly ↗</a></p>
+                <div class="player-controls" role="group" aria-label="Video controls">
+                  <button class="icon-button" id="play-toggle" type="button" aria-label="Pause teaser" title="Pause teaser">
+                    <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                    <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                  </button>
+                  <span class="playback-time" id="playback-time" aria-hidden="true">00:00 / 00:23</span>
+                  <span class="control-divider" aria-hidden="true"></span>
+                  <button class="icon-button is-muted" id="sound-toggle" type="button" aria-label="Unmute teaser" title="Unmute teaser" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 4-6 5H2v6h3l6 5z"/><path class="sound-on" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/><path class="sound-off" d="m16 9 6 6m0-6-6 6"/></svg>
+                  </button>
+                  <button class="icon-button" id="fullscreen-toggle" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+                </div>
+                <input class="video-progress" id="video-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Video playback position" aria-valuetext="00:00" disabled>
+              </div>
+            </div>
+          </figure>
+
+          <section class="abstract-section" aria-labelledby="abstract-title">
+            <h2 id="abstract-title">Abstract</h2>
+            <p>We present COHERE4D, a <strong>training-free</strong> framework that geometrically aligns the outputs of independently pretrained human and scene foundation models to reconstruct a <strong>coherent, metric</strong> 4D world from monocular videos. Recent unified human–scene reconstruction methods largely learn metric scene scale and human alignment from training data, but generalize poorly to out-of-distribution scenes. Instead, COHERE4D performs test-time geometric alignment of human and scene predictions using dense pixel-aligned correspondences and RANSAC-based robust estimation. This alignment provides mutual geometric grounding: near-metric human meshes anchor the scale of scene geometry and camera translation, while scene geometry in turn refines human translation to improve global human trajectories. This test-time alignment requires no additional training and uses RANSAC-based robust estimation to suppress outliers caused by occlusion, background contamination, and erroneous depth. Across benchmarks, COHERE4D significantly outperforms prior methods in <strong>human–scene alignment, metric-scale scene and camera pose reconstruction, and global human motion estimation</strong>. Our training-free alignment method adds only about 4 ms/frame, while the overall inference reaches up to 10 FPS.</p>
+          </section>
+
+          <section class="reconstruction-section" aria-labelledby="reconstruction-title">
+            <h2 id="reconstruction-title">Human–Scene Reconstruction</h2>
+            <!-- Summarized from the paper's Introduction and Methods overview. -->
+            <p class="section-description">Given a monocular RGB video, COHERE4D reconstructs multiple people, dense scene geometry, and camera motion in a shared metric 4D world.</p>
+
+            <div class="reconstruction-viewer" id="reconstruction-viewer" role="group" aria-label="Human–scene reconstruction and original video">
+              <video id="reconstruction-video" class="reconstruction-video" src="video/human_scene_reconstruction/P2_20_outdoor_walk/P2_20_outdoor_walk_Recon_5×.mp4" poster="video/human_scene_reconstruction/P2_20_outdoor_walk/recon-poster.jpg" muted playsinline preload="metadata" controls aria-label="Reconstruction: P2 20 outdoor walk"></video>
+              <div class="reconstruction-inset is-compact" id="reconstruction-inset">
+                <video id="reconstruction-input" src="video/human_scene_reconstruction/P2_20_outdoor_walk/P2_20_outdoor_walk_5×.mp4" poster="video/human_scene_reconstruction/P2_20_outdoor_walk/input-poster.jpg" muted playsinline preload="metadata" aria-label="Original video: P2 20 outdoor walk"></video>
+              </div>
+              <button class="play-prompt" id="reconstruction-play-prompt" type="button" aria-label="Play reconstruction" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="reconstruction-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Reconstruction playback controls">
+                <button class="icon-button" id="reconstruction-play" type="button" aria-label="Pause reconstruction" title="Pause reconstruction">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="reconstruction-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="reconstruction-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="reconstruction-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Reconstruction playback position" aria-valuetext="00:00" disabled>
+            </div>
+
+            <div class="case-thumbnails" role="group" aria-label="Choose a reconstruction case">
+              <button class="case-thumbnail" type="button" aria-pressed="true" aria-controls="reconstruction-viewer" aria-label="Play P2 20 outdoor walk" data-label="P2 20 outdoor walk" data-size="compact" data-recon="video/human_scene_reconstruction/P2_20_outdoor_walk/P2_20_outdoor_walk_Recon_5×.mp4" data-input="video/human_scene_reconstruction/P2_20_outdoor_walk/P2_20_outdoor_walk_5×.mp4">
+                <img src="video/human_scene_reconstruction/P2_20_outdoor_walk/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" aria-pressed="false" aria-controls="reconstruction-viewer" aria-label="Play P4 37 outdoor run circle" data-label="P4 37 outdoor run circle" data-size="compact" data-recon="video/human_scene_reconstruction/P4_37_outdoor_run_circle/P4_37_outdoor_run_circle.mp4" data-input="video/human_scene_reconstruction/P4_37_outdoor_run_circle/P4_37_outdoor_run_circle_Recon.mp4">
+                <img src="video/human_scene_reconstruction/P4_37_outdoor_run_circle/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" aria-pressed="false" aria-controls="reconstruction-viewer" aria-label="Play P6 48 outdoor walk downhill" data-label="P6 48 outdoor walk downhill" data-size="compact" data-recon="video/human_scene_reconstruction/P6_48_outdoor_walk_downhill/P6_48_outdoor_walk_downhill_Recon.mp4" data-input="video/human_scene_reconstruction/P6_48_outdoor_walk_downhill/P6_48_outdoor_walk_downhilll.mp4">
+                <img src="video/human_scene_reconstruction/P6_48_outdoor_walk_downhill/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" aria-pressed="false" aria-controls="reconstruction-viewer" aria-label="Play P4 36 outdoor long walk" data-label="P4 36 outdoor long walk" data-size="compact" data-inset="right" data-recon="video/human_scene_reconstruction/P4_36_outdoor_long_walk/P4_36_outdoor_long_walk_3db_Recon.mp4" data-input="video/human_scene_reconstruction/P4_36_outdoor_long_walk/P4_36_outdoor_long_walk.mp4">
+                <img src="video/human_scene_reconstruction/P4_36_outdoor_long_walk/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" aria-pressed="false" aria-controls="reconstruction-viewer" aria-label="Play downtown walking" data-label="Downtown walking" data-recon="video/human_scene_reconstruction/downtown_walking_00/downtown_walking_00_Recon.mp4" data-input="video/human_scene_reconstruction/downtown_walking_00/downtown_walking_00.mp4">
+                <img src="video/human_scene_reconstruction/downtown_walking_00/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+            </div>
+          </section>
+
+          <section class="results-section method-section" aria-labelledby="method-title">
+            <h2 id="method-title">Method</h2>
+            <figure class="method-figure">
+              <img src="video/method/pipeline2.png" width="5170" height="1993" loading="lazy" decoding="async" alt="COHERE4D pipeline: frozen human and scene branches, robust human–scene correspondences, human-anchored scale calibration, and scene-grounded translation refinement produce a unified metric world.">
+              <figcaption>Given monocular video frames, frozen human and scene branches independently reconstruct human meshes and scene geometry. Dense human–scene correspondences are established, and RANSAC selects robust inliers for geometric alignment. Human-anchored scale calibration uses humans as natural metric anchors to calibrate scene scale, while scene-grounded translation refinement uses the reconstructed scene to refine human translation, yielding a unified metric 4D world.</figcaption>
+            </figure>
+          </section>
+
+          <section class="alignment-section" aria-labelledby="alignment-title">
+            <h2 id="alignment-title">Human–Scene Alignment Comparison</h2>
+            <p class="section-description">Comparison with Human3R and UniSH on human–scene alignment.</p>
+            <div class="alignment-player" id="alignment-player" role="group" aria-label="Input, Ours, Human3R, and UniSH comparison">
+              <div class="alignment-grid">
+                <figure class="alignment-cell alignment-input">
+                  <figcaption>Input</figcaption>
+                  <div class="alignment-media">
+                    <video id="alignment-input" muted playsinline preload="metadata" poster="video/hsa_baseline_comparison/P1_14_outdoor_climb/poster-input.jpg" aria-label="Input human–scene alignment"></video>
+                    <img id="alignment-raw" src="video/hsa_baseline_comparison/P1_14_outdoor_climb/single_frame/raw.png" alt="Original frame for the single-frame alignment comparison" hidden>
+                  </div>
+                </figure>
+                <figure class="alignment-cell alignment-ours">
+                  <figcaption>Ours</figcaption>
+                  <div class="alignment-media">
+                    <video id="alignment-ours" muted playsinline preload="metadata" poster="video/hsa_baseline_comparison/P1_14_outdoor_climb/poster-ours.jpg" aria-label="Ours human–scene alignment"></video>
+                  </div>
+                </figure>
+                <figure class="alignment-cell alignment-human3r">
+                  <figcaption>Human3R</figcaption>
+                  <div class="alignment-media">
+                    <video id="alignment-human3r" muted playsinline preload="metadata" poster="video/hsa_baseline_comparison/P1_14_outdoor_climb/poster-human3r.jpg" aria-label="Human3R human–scene alignment"></video>
+                  </div>
+                </figure>
+                <figure class="alignment-cell alignment-unish">
+                  <figcaption>UniSH</figcaption>
+                  <div class="alignment-media">
+                    <video id="alignment-unish" muted playsinline preload="metadata" poster="video/hsa_baseline_comparison/P1_14_outdoor_climb/poster-unish.jpg" aria-label="UniSH human–scene alignment"></video>
+                  </div>
+                </figure>
+              </div>
+              <button class="play-prompt" id="alignment-play-prompt" type="button" aria-label="Play alignment" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="alignment-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Alignment playback controls">
+                <button class="icon-button" id="alignment-play" type="button" aria-label="Pause alignment" title="Pause alignment">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="alignment-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="alignment-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="alignment-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Alignment playback position" aria-valuetext="00:00" disabled>
+            </div>
+            <div class="case-thumbnails alignment-thumbnails" role="group" aria-label="Choose an alignment comparison case">
+              <button class="case-thumbnail" type="button" data-case="0" aria-pressed="true" aria-controls="alignment-player" aria-label="Compare P1_14_outdoor_climb">
+                <img src="video/hsa_baseline_comparison/P1_14_outdoor_climb/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="1" aria-pressed="false" aria-controls="alignment-player" aria-label="Compare P9_76_outdoor_sitting">
+                <img src="video/hsa_baseline_comparison/P9_76_outdoor_sitting/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="2" aria-pressed="false" aria-controls="alignment-player" aria-label="Compare Date03_Sub05_yogamat">
+                <img src="video/hsa_baseline_comparison/Date03_Sub05_yogamat/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+            </div>
+          </section>
+
+          <section class="results-section motion-section" data-gallery="motion" aria-labelledby="motion-title">
+            <h2 id="motion-title">Global Human Motion Comparison</h2>
+            <ul class="color-legend" aria-label="Global human motion color legend">
+              <li><span class="legend-dot" style="--legend-color: #7AD151" aria-hidden="true"></span>Ground truth</li>
+              <li><span class="legend-dot" style="--legend-color: #24B1B1" aria-hidden="true"></span>Ours</li>
+              <li><span class="legend-dot" style="--legend-color: #FE9F6D" aria-hidden="true"></span>Human3R</li>
+              <li><span class="legend-dot" style="--legend-color: #B07AA1" aria-hidden="true"></span>UniSH</li>
+            </ul>
+            <div class="reconstruction-viewer motion-viewer" id="motion-viewer" role="group" aria-label="Global human motion comparison and original video">
+              <video id="motion-result" muted playsinline preload="none" poster="video/human_motion/P7_56_outdoor_stairs_up_down/poster-result.jpg" aria-label="Global human motion comparison"></video>
+              <div class="reconstruction-inset is-compact is-right" id="motion-inset">
+                <video id="motion-input" muted playsinline preload="none" poster="video/human_motion/P7_56_outdoor_stairs_up_down/poster-input.jpg" aria-label="Original video"></video>
+              </div>
+              <button class="play-prompt" id="motion-play-prompt" type="button" aria-label="Play motion" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="motion-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Video playback controls">
+                <button class="icon-button" id="motion-play" type="button" aria-label="Pause motion" title="Pause motion">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="motion-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="motion-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="motion-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Video playback position" aria-valuetext="00:00" disabled>
+            </div>
+            <div class="case-thumbnails motion-thumbnails" role="group" aria-label="Choose a motion comparison case">
+              <button class="case-thumbnail" type="button" data-case="0" aria-pressed="true" aria-controls="motion-viewer" aria-label="Play P7_56_outdoor_stairs_up_down">
+                <img src="video/human_motion/P7_56_outdoor_stairs_up_down/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="1" aria-pressed="false" aria-controls="motion-viewer" aria-label="Play P3_30_outdoor_stairs_down">
+                <img src="video/human_motion/P3_30_outdoor_stairs_down/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="2" aria-pressed="false" aria-controls="motion-viewer" aria-label="Play P9_79_outdoor_walk_rectangle">
+                <img src="video/human_motion/P9_79_outdoor_walk_rectangle/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="3" aria-pressed="false" aria-controls="motion-viewer" aria-label="Play P9_78_outdoor_stairs_up_down">
+                <img src="video/human_motion/P9_78_outdoor_stairs_up_down/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="4" aria-pressed="false" aria-controls="motion-viewer" aria-label="Play P4_35_indoor_walk">
+                <img src="video/human_motion/P4_35_indoor_walk/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="5" aria-pressed="false" aria-controls="motion-viewer" aria-label="Play P7_58_outdoor_parcours">
+                <img src="video/human_motion/P7_58_outdoor_parcours/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+            </div>
+          </section>
+
+          <section class="results-section scene-section" data-gallery="scene" aria-labelledby="scene-title">
+            <h2 id="scene-title">Metric Scene and Camera Motion Comparison</h2>
+            <p class="section-description">COHERE4D uses reconstructed humans as metric anchors to calibrate scene geometry and camera trajectories. Our calibration brings predictions from scene foundation models closer to the ground-truth metric scale.</p>
+            <ul class="color-legend" aria-label="Metric scene and camera motion color legend">
+              <li><span class="legend-dot" style="--legend-color: #2DDC50" aria-hidden="true"></span>Ground truth</li>
+              <li><span class="legend-dot" style="--legend-color: #000000" aria-hidden="true"></span>Ours Scene</li>
+              <li><span class="legend-dot" style="--legend-color: #FCA636" aria-hidden="true"></span>Ours Camera</li>
+              <li><span class="legend-dot" style="--legend-color: #B07AA1" aria-hidden="true"></span>Raw Scene</li>
+            </ul>
+            <div class="alignment-player scene-comparison-player" id="scene-viewer" role="group" aria-label="Input, VGGT-Omega, DA3, and Pi3X comparison">
+              <div class="alignment-grid">
+                <figure class="alignment-cell">
+                  <figcaption>Input</figcaption>
+                  <div class="alignment-media">
+                    <video id="scene-input" muted playsinline preload="none" poster="video/scene/20221013_3_250_batch01hand_orbit_bigOffice_seq_000049/poster-input.jpg" aria-label="Input metric scene and camera motion"></video>
+                  </div>
+                </figure>
+                <figure class="alignment-cell">
+                  <figcaption>VGGT-Ω</figcaption>
+                  <div class="alignment-media">
+                    <video id="scene-vggt" muted playsinline preload="none" poster="video/scene/20221013_3_250_batch01hand_orbit_bigOffice_seq_000049/poster-vggt.jpg" aria-label="VGGT-Ω metric scene and camera motion"></video>
+                  </div>
+                </figure>
+                <figure class="alignment-cell">
+                  <figcaption>DA3</figcaption>
+                  <div class="alignment-media">
+                    <video id="scene-da3" muted playsinline preload="none" poster="video/scene/20221013_3_250_batch01hand_orbit_bigOffice_seq_000049/poster-da3.jpg" aria-label="DA3 metric scene and camera motion"></video>
+                  </div>
+                </figure>
+                <figure class="alignment-cell">
+                  <figcaption>Pi3X</figcaption>
+                  <div class="alignment-media">
+                    <video id="scene-pi3x" muted playsinline preload="none" poster="video/scene/20221013_3_250_batch01hand_orbit_bigOffice_seq_000049/poster-pi3x.jpg" aria-label="Pi3X metric scene and camera motion"></video>
+                  </div>
+                </figure>
+              </div>
+              <button class="play-prompt" id="scene-play-prompt" type="button" aria-label="Play scene" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="scene-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Video playback controls">
+                <button class="icon-button" id="scene-play" type="button" aria-label="Pause scene" title="Pause scene">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="scene-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="scene-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="scene-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Video playback position" aria-valuetext="00:00" disabled>
+            </div>
+            <div class="case-thumbnails scene-thumbnails" role="group" aria-label="Choose a scene comparison case">
+              <button class="case-thumbnail" type="button" data-case="0" aria-pressed="true" aria-controls="scene-viewer" aria-label="Play 20221013_3_250_batch01hand_orbit_bigOffice_seq_000049">
+                <img src="video/scene/20221013_3_250_batch01hand_orbit_bigOffice_seq_000049/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="1" aria-pressed="false" aria-controls="scene-viewer" aria-label="Play 20241213_1_250_rome_tracking_seq_000032">
+                <img src="video/scene/20241213_1_250_rome_tracking_seq_000032/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+              <button class="case-thumbnail" type="button" data-case="2" aria-pressed="false" aria-controls="scene-viewer" aria-label="Play 20221019_3-8_250_highbmihand_orbit_stadium_seq_000014">
+                <img src="video/scene/20221019_3-8_250_highbmihand_orbit_stadium_seq_000014/thumbnail.jpg" width="400" height="250" loading="lazy" alt="">
+              </button>
+            </div>
+          </section>
+
+          <section class="results-section ablation-section" aria-labelledby="ablation-title">
+            <h2 id="ablation-title">Ablation Study</h2>
+            <div class="ablation-item" aria-labelledby="scale-ablation-title">
+              <h3 id="scale-ablation-title">Effect of Human-anchored Scale Calibration</h3>
+              <p class="section-description">Scale calibration recovers the raw scene prediction toward the ground-truth metric scale.</p>
+              <ul class="color-legend" aria-label="Scale calibration color legend">
+                <li><span class="legend-dot" style="--legend-color: #2DDC50" aria-hidden="true"></span>Ground truth</li>
+                <li><span class="legend-dot" style="--legend-color: #000000" aria-hidden="true"></span>Ours Scene</li>
+                <li><span class="legend-dot" style="--legend-color: #B07AA1" aria-hidden="true"></span>VGGT-Ω raw scene</li>
+              </ul>
+            <div class="reconstruction-viewer standalone-player" id="scale-ablation-viewer" data-player="scale-ablation" style="aspect-ratio: 3046 / 1936" role="group" aria-label="Effect of Human-anchored Scale Calibration">
+              <video id="scale-ablation-video" muted playsinline preload="none" poster="video/ablation/scale/poster.jpg" aria-label="Effect of Human-anchored Scale Calibration"></video>
+              <button class="play-prompt" id="scale-ablation-play-prompt" type="button" aria-label="Play scale-ablation" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="scale-ablation-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Video playback controls">
+                <button class="icon-button" id="scale-ablation-play" type="button" aria-label="Pause scale-ablation" title="Pause scale-ablation">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="scale-ablation-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="scale-ablation-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="scale-ablation-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Video playback position" aria-valuetext="00:00" disabled>
+            </div>
+            </div>
+            <div class="ablation-item" aria-labelledby="translation-ablation-title">
+              <h3 id="translation-ablation-title">Effect of Scene-grounded Translation Refinement</h3>
+              <p class="section-description">Translation refinement improves human–scene alignment and contact.</p>
+            <div class="reconstruction-viewer standalone-player" id="translation-ablation-viewer" data-player="translation-ablation" style="aspect-ratio: 1920 / 1034" role="group" aria-label="Effect of Scene-grounded Translation Refinement">
+              <video id="translation-ablation-video" muted playsinline preload="none" poster="video/ablation/transl/poster.jpg" aria-label="Effect of Scene-grounded Translation Refinement"></video>
+              <button class="play-prompt" id="translation-ablation-play-prompt" type="button" aria-label="Play translation-ablation" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="translation-ablation-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Video playback controls">
+                <button class="icon-button" id="translation-ablation-play" type="button" aria-label="Pause translation-ablation" title="Pause translation-ablation">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="translation-ablation-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="translation-ablation-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="translation-ablation-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Video playback position" aria-valuetext="00:00" disabled>
+            </div>
+            </div>
+          </section>
+
+          <section class="results-section" aria-labelledby="occlusion-title">
+            <h2 id="occlusion-title">More Occlusion Results</h2>
+            <div class="reconstruction-viewer standalone-player" id="occlusion-viewer" data-player="occlusion" style="aspect-ratio: 1920 / 980" role="group" aria-label="More Occlusion Results">
+              <video id="occlusion-video" muted playsinline preload="none" poster="video/occlusion/poster.jpg" aria-label="More Occlusion Results"></video>
+              <button class="play-prompt" id="occlusion-play-prompt" type="button" aria-label="Play occlusion" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="occlusion-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Video playback controls">
+                <button class="icon-button" id="occlusion-play" type="button" aria-label="Pause occlusion" title="Pause occlusion">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="occlusion-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="occlusion-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="occlusion-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Video playback position" aria-valuetext="00:00" disabled>
+            </div>
+          </section>
+
+          <section class="results-section" aria-labelledby="interaction-title">
+            <h2 id="interaction-title">More Interaction Results</h2>
+            <div class="reconstruction-viewer standalone-player" id="interaction-viewer" data-player="interaction" style="aspect-ratio: 1920 / 1080" role="group" aria-label="More Interaction Results">
+              <video id="interaction-video" muted playsinline preload="none" poster="video/interaction/poster.jpg" aria-label="More Interaction Results"></video>
+              <button class="play-prompt" id="interaction-play-prompt" type="button" aria-label="Play interaction" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="interaction-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Video playback controls">
+                <button class="icon-button" id="interaction-play" type="button" aria-label="Pause interaction" title="Pause interaction">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="interaction-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="interaction-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="interaction-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Video playback position" aria-valuetext="00:00" disabled>
+            </div>
+          </section>
+
+          <section class="results-section" aria-labelledby="internet-title">
+            <h2 id="internet-title">More Internet Video</h2>
+            <div class="reconstruction-viewer standalone-player" id="internet-viewer" data-player="internet" style="aspect-ratio: 1920 / 980" role="group" aria-label="More Internet Video">
+              <video id="internet-video" muted playsinline preload="none" poster="video/internet/poster.jpg" aria-label="More Internet Video"></video>
+              <button class="play-prompt" id="internet-play-prompt" type="button" aria-label="Play internet" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
+              <p class="video-error" id="internet-error" role="status" hidden>Unable to load this case.</p>
+              <div class="player-controls" role="group" aria-label="Video playback controls">
+                <button class="icon-button" id="internet-play" type="button" aria-label="Pause internet" title="Pause internet">
+                  <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+                  <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7z"/></svg>
+                </button>
+                <span class="playback-time" id="internet-time" aria-hidden="true">00:00 / 00:00</span>
+                <button class="icon-button" id="internet-fullscreen" type="button" aria-label="Enter fullscreen" title="Enter fullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button>
+              </div>
+              <input class="video-progress" id="internet-seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Video playback position" aria-valuetext="00:00" disabled>
+            </div>
+          </section>
+
+          <section class="results-section citation-section" aria-labelledby="citation-title">
+            <h2 id="citation-title">Citation</h2>
+            <!-- Placeholder: add publication metadata when available. -->
+            <pre class="citation-code"><code>@misc{wang_cohere4d,
+  title  = {{COHERE4D: Training-Free Metric Alignment for Coherent 4D Human--Scene Reconstruction}},
+  author = {Wang, Zhumei and Wang, Shaofei and An, Xiang and Pei, Mingtao and Huang, Siyuan}
+}</code></pre>
+          </section>
+
+          <footer class="opening-footer"><span class="footer-mark">COHERE4D</span><a href="#top" class="back-to-top">Back to the film <span aria-hidden="true">↑</span></a></footer>
+        </article>
+
+        <a class="scroll-cue hero-ui" href="#paper"><span class="scroll-line" aria-hidden="true"></span><span>SCROLL TO EXPLORE</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16m-6-6 6 6 6-6"/></svg></a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

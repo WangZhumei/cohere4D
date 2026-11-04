@@ -1,0 +1,3 @@
+# Keep any future local source-video backups out of Git.
+/video/.originals/
+.DS_Store
