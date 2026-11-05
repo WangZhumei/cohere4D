@@ -29,6 +29,8 @@
   let isSeeking = false;
   let resumeAfterSeek = false;
   let controlsTimer;
+  let teaserVisible = false;
+  let teaserWantsPlay = true;
 
   function hideControls() {
     clearTimeout(controlsTimer);
@@ -109,6 +111,7 @@
   }
 
   async function play() {
+    if (!teaserVisible || !teaserWantsPlay || document.hidden) return;
     try {
       await video.play();
       playPrompt.hidden = true;
@@ -176,10 +179,10 @@
 
   playToggle.addEventListener('click', () => {
     if (!introduced) introduce();
-    else if (video.paused) play();
-    else video.pause();
+    else if (video.paused) { teaserWantsPlay = true; play(); }
+    else { teaserWantsPlay = false; video.pause(); }
   });
-  playPrompt.addEventListener('click', play);
+  playPrompt.addEventListener('click', () => { teaserWantsPlay = true; play(); });
   soundToggle.addEventListener('click', () => {
     video.muted = !video.muted;
   });
@@ -224,6 +227,12 @@
   };
   video.addEventListener('error', showVideoError);
   video.querySelector('source').addEventListener('error', showVideoError);
+  observeCoherePlaybackVisibility(stage, visible => {
+    teaserVisible = visible;
+    if (!visible) video.pause();
+    else if (introduced && teaserWantsPlay) play();
+  });
+  loadCohereVideosWhenNear(stage, () => {});
 
   document.querySelectorAll('a[href="#paper"]').forEach(link => {
     link.addEventListener('click', event => {

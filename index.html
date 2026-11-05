@@ -9,8 +9,8 @@
   <link rel="icon" href="video/teaser/favicon.svg" type="image/svg+xml">
   <script>document.documentElement.classList.add('js');</script>
   <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
   <script src="video-group.js" defer></script>
+  <script src="script.js" defer></script>
   <script src="reconstruction.js" defer></script>
   <script src="alignment.js" defer></script>
   <script src="results.js" defer></script>
@@ -38,16 +38,17 @@
             <h1 id="paper-title"><span class="paper-wordmark">COHERE<span>4D</span></span><span class="paper-title">Training-Free Metric Alignment for<br class="desktop-break"> Coherent 4D Human–Scene Reconstruction</span></h1>
             <div class="authors" aria-label="Authors">
               <a href="https://wangzhumei.github.io/zhumeiwang/" target="_blank" rel="noopener noreferrer">Zhumei Wang<sup>1,2</sup></a>
-              <a href="https://taconite.github.io/" target="_blank" rel="noopener noreferrer">Shaofei Wang<sup>2</sup></a>
+              <a href="https://taconite.github.io/" target="_blank" rel="noopener noreferrer">Shaofei Wang<sup>2</sup><svg class="corresponding-icon" viewBox="0 0 24 24" role="img" aria-label="Corresponding author"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></a>
               <a href="https://www.anxiangsir.com/" target="_blank" rel="noopener noreferrer">Xiang An<sup>3</sup></a>
               <a href="https://peimingtao.github.io/" target="_blank" rel="noopener noreferrer">Mingtao Pei<sup>1</sup></a>
-              <a href="https://siyuanhuang.com/" target="_blank" rel="noopener noreferrer">Siyuan Huang<sup>2</sup></a>
+              <a href="https://siyuanhuang.com/" target="_blank" rel="noopener noreferrer">Siyuan Huang<sup>2</sup><svg class="corresponding-icon" viewBox="0 0 24 24" role="img" aria-label="Corresponding author"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></a>
             </div>
             <div class="affiliations" aria-label="Affiliations">
               <span><sup>1</sup> Beijing Institute of Technology</span>
               <span><sup>2</sup> State Key Laboratory of General Artificial Intelligence, BIGAI</span>
               <span><sup>3</sup> MiniMax</span>
             </div>
+            <p class="corresponding-note"><svg class="corresponding-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/><path d="m3.5 7 8.5 6 8.5-6"/></svg> Corresponding authors</p>
             <nav class="paper-links" aria-label="Project resources">
               <!-- Add href URLs and remove aria-disabled / tabindex when these resources are available. -->
               <a class="resource-link resource-primary" role="link" aria-disabled="true" tabindex="0" title="Paper link coming soon">
@@ -99,9 +100,9 @@
             <p class="section-description">Given a monocular RGB video, COHERE4D reconstructs multiple people, dense scene geometry, and camera motion in a shared metric 4D world.</p>
 
             <div class="reconstruction-viewer" id="reconstruction-viewer" role="group" aria-label="Human–scene reconstruction and original video">
-              <video id="reconstruction-video" class="reconstruction-video" src="video/human_scene_reconstruction/P2_20_outdoor_walk/P2_20_outdoor_walk_Recon_5×.mp4" poster="video/human_scene_reconstruction/P2_20_outdoor_walk/recon-poster.jpg" muted playsinline preload="metadata" controls aria-label="Reconstruction: P2 20 outdoor walk"></video>
+              <video id="reconstruction-video" class="reconstruction-video" poster="video/human_scene_reconstruction/P2_20_outdoor_walk/recon-poster.jpg" muted playsinline preload="none" controls aria-label="Reconstruction: P2 20 outdoor walk"></video>
               <div class="reconstruction-inset is-compact" id="reconstruction-inset">
-                <video id="reconstruction-input" src="video/human_scene_reconstruction/P2_20_outdoor_walk/P2_20_outdoor_walk_5×.mp4" poster="video/human_scene_reconstruction/P2_20_outdoor_walk/input-poster.jpg" muted playsinline preload="metadata" aria-label="Original video: P2 20 outdoor walk"></video>
+                <video id="reconstruction-input" poster="video/human_scene_reconstruction/P2_20_outdoor_walk/input-poster.jpg" muted playsinline preload="none" aria-label="Original video: P2 20 outdoor walk"></video>
               </div>
               <button class="play-prompt" id="reconstruction-play-prompt" type="button" aria-label="Play reconstruction" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 11 7-11 7z"/></svg></button>
               <p class="video-error" id="reconstruction-error" role="status" hidden>Unable to load this case.</p>

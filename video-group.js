@@ -49,6 +49,7 @@ class CohereVideoGroup extends EventTarget {
       video.src = src; video.load();
     }
     this.update(); this.pump();
+    coherePreloader.schedule();
   }
   setEnabled(enabled) {
     this.enabled = enabled;
@@ -102,18 +103,112 @@ class CohereVideoGroup extends EventTarget {
   restart() { this.seek(0); }
 }
 
-// Defer media requests until the section is close to the viewport, so the
-// opening teaser does not compete with the rest of the page for bandwidth.
+// Require a stable, fully visible player before autoplay. Oversized players
+// qualify when they fill the available viewport, so small screens can play too.
+function observeCoherePlaybackVisibility(viewer, change) {
+  let timer = 0, frame = 0, enabled = false;
+  function qualifies() {
+    const r = viewer.getBoundingClientRect();
+    const w = document.documentElement.clientWidth, h = window.innerHeight;
+    const visibleW = Math.max(0, Math.min(r.right, w) - Math.max(r.left, 0));
+    const visibleH = Math.max(0, Math.min(r.bottom, h) - Math.max(r.top, 0));
+    const fullscreen = document.fullscreenElement;
+    return !document.hidden && r.width > 0 && r.height > 0 &&
+      (!fullscreen || fullscreen.contains(viewer) || viewer.contains(fullscreen)) &&
+      visibleW >= Math.min(r.width, w) - 2 && visibleH >= Math.min(r.height, h) - 2;
+  }
+  function update() {
+    frame = 0;
+    if (!qualifies()) {
+      clearTimeout(timer); timer = 0;
+      if (enabled) { enabled = false; change(false); }
+    } else if (!enabled && !timer) {
+      timer = setTimeout(() => {
+        timer = 0;
+        if (qualifies()) { enabled = true; change(true); }
+      }, 500);
+    }
+  }
+  function schedule() { if (!frame) frame = requestAnimationFrame(update); }
+  window.addEventListener('scroll', schedule, {passive: true});
+  window.addEventListener('resize', schedule, {passive: true});
+  document.addEventListener('visibilitychange', update);
+  document.addEventListener('fullscreenchange', update);
+  new ResizeObserver(schedule).observe(viewer);
+  new IntersectionObserver(schedule, {threshold: [0, 1]}).observe(viewer);
+  change(false);
+  update();
+}
+
+const cohereVideoGroups = new WeakMap();
+// Native buffering preserves range requests and browser caching. This scheduler
+// provides priority hints; the browser ultimately controls active HTTP requests.
+const coherePreloader = (() => {
+  const sections = [];
+  let frame = 0;
+  const videos = item => cohereVideoGroups.get(item.viewer)?.active || [...item.viewer.querySelectorAll('video')];
+  function complete(item) {
+    const active = videos(item);
+    return item.loaded && active.length > 0 && active.every(v => v.error ||
+      (Number.isFinite(v.duration) && v.duration > 0 && v.buffered.length === 1 &&
+       v.buffered.start(0) <= .1 && v.buffered.end(0) >= v.duration - .15));
+  }
+  function ensure(item) {
+    if (!item.loaded) { item.loaded = true; item.load(); }
+  }
+  function run() {
+    frame = 0;
+    const priority = new Set();
+    const visible = sections.filter(item => item.visible);
+    if (!document.hidden) {
+      sections.filter(item => item.near).forEach(ensure);
+      visible.forEach(item => { ensure(item); priority.add(item); });
+      const connection = navigator.connection;
+      const conserve = connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || '');
+      if (!conserve && visible.length && visible.every(complete)) {
+        const next = Math.max(...visible.map(item => sections.indexOf(item))) + 1;
+        // Keep at most two following sections warm, one group at a time.
+        for (const item of sections.slice(next, next + 2)) {
+          ensure(item);
+          if (!complete(item)) { priority.add(item); break; }
+        }
+      }
+    }
+    for (const item of sections) for (const video of videos(item)) {
+      const preload = priority.has(item) ? 'auto' : 'metadata';
+      if (video.preload !== preload) video.preload = preload;
+    }
+  }
+  function schedule() { if (!frame) frame = requestAnimationFrame(run); }
+  for (const event of ['progress', 'loadedmetadata', 'loadeddata', 'canplaythrough', 'suspend', 'emptied', 'error']) {
+    document.addEventListener(event, schedule, true);
+  }
+  document.addEventListener('visibilitychange', schedule);
+  navigator.connection?.addEventListener('change', schedule);
+  return {
+    schedule,
+    add(viewer, load) {
+      const item = {viewer, load, loaded: false, near: false, visible: false};
+      sections.push(item);
+      new IntersectionObserver(entries => {
+        item.near = entries[entries.length - 1].isIntersecting;
+        schedule();
+      }, {rootMargin: '200px 0px'}).observe(viewer);
+      new IntersectionObserver(entries => {
+        const entry = entries[entries.length - 1];
+        item.visible = entry.isIntersecting && entry.intersectionRatio > 0;
+        schedule();
+      }, {threshold: [0, .01]}).observe(viewer);
+    },
+  };
+})();
+
 function loadCohereVideosWhenNear(viewer, load) {
-  const observer = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
-    load();
-    observer.disconnect();
-  }, {rootMargin: '200px 0px'});
-  observer.observe(viewer);
+  coherePreloader.add(viewer, load);
 }
 
 function bindCohereVideoControls(group, viewer, prefix) {
+  cohereVideoGroups.set(viewer, group);
   const find = suffix => document.querySelector('#' + prefix + '-' + suffix);
   const play = find('play'), prompt = find('play-prompt'), fullscreen = find('fullscreen');
   const seek = find('seek'), time = find('time'), error = find('error');
@@ -162,6 +257,6 @@ function bindCohereVideoControls(group, viewer, prefix) {
     const label = document.fullscreenElement === viewer ? 'Exit fullscreen' : 'Enter fullscreen';
     fullscreen.setAttribute('aria-label', label); fullscreen.title = label;
   });
-  new IntersectionObserver(entries => group.setEnabled(entries[0].isIntersecting), {threshold: .1}).observe(viewer);
+  observeCoherePlaybackVisibility(viewer, enabled => group.setEnabled(enabled));
   update();
 }
