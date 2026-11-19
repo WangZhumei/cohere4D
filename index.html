@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#070d1b">
-  <title>COHERE4D — Coherent 4D Human–Scene Reconstruction</title>
-  <meta name="description" content="COHERE4D: Training-Free Metric Alignment for Coherent 4D Human–Scene Reconstruction. A coherent, metric 4D world from monocular video.">
+  <title>COHERE4D — Coherent Metric 4D Human–Scene Reconstruction</title>
+  <meta name="description" content="COHERE4D: Training-Free Dense Surface Alignment for Coherent Metric 4D Human–Scene Reconstruction. A coherent, metric 4D world from monocular video.">
   <link rel="icon" href="video/teaser/favicon.svg" type="image/svg+xml">
   <script>document.documentElement.classList.add('js');</script>
   <link rel="stylesheet" href="styles.css">
@@ -27,7 +27,7 @@
           <div class="orbit orbit-one"></div>
           <div class="orbit orbit-two"></div>
           <div class="intro-caption">
-            <p>Training-Free Metric Alignment for Coherent 4D Human–Scene Reconstruction</p>
+            <p>Training-Free Dense Surface Alignment for Coherent Metric 4D Human–Scene Reconstruction</p>
           </div>
         </div>
 
@@ -35,7 +35,7 @@
 
         <article class="paper" id="paper" aria-labelledby="paper-title">
           <header class="paper-header">
-            <h1 id="paper-title"><span class="paper-wordmark">COHERE<span>4D</span></span><span class="paper-title">Training-Free Metric Alignment for<br class="desktop-break"> Coherent 4D Human–Scene Reconstruction</span></h1>
+            <h1 id="paper-title"><span class="paper-wordmark">COHERE<span>4D</span></span><span class="paper-title">Training-Free Dense Surface Alignment for<br class="desktop-break"> Coherent Metric 4D Human–Scene Reconstruction</span></h1>
             <div class="authors" aria-label="Authors">
               <a href="https://wangzhumei.github.io/zhumeiwang/" target="_blank" rel="noopener noreferrer">Zhumei Wang<sup>1,2</sup></a>
               <a href="https://taconite.github.io/" target="_blank" rel="noopener noreferrer">Shaofei Wang<sup>2</sup><svg class="corresponding-icon" viewBox="0 0 24 24" role="img" aria-label="Corresponding author"><path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/><path d="m3.5 7 8.5 6 8.5-6"/></svg></a>
@@ -91,7 +91,7 @@
 
           <section class="abstract-section" aria-labelledby="abstract-title">
             <h2 id="abstract-title">Abstract</h2>
-            <p>We present COHERE4D, a <strong>training-free</strong> framework that geometrically aligns the outputs of independently pretrained human and scene foundation models to reconstruct a <strong>coherent, metric</strong> 4D world from monocular videos. Recent unified human–scene reconstruction methods largely learn metric scene scale and human alignment from training data, but generalize poorly to out-of-distribution scenes. Instead, COHERE4D performs test-time geometric alignment of human and scene predictions using dense pixel-aligned correspondences and RANSAC-based robust estimation. This alignment provides mutual geometric grounding: near-metric human meshes anchor the scale of scene geometry and camera translation, while scene geometry in turn refines human translation to improve global human trajectories. This test-time alignment requires no additional training and uses RANSAC-based robust estimation to suppress outliers caused by occlusion, background contamination, and erroneous depth. Across benchmarks, COHERE4D significantly outperforms prior methods in <strong>human–scene alignment, metric-scale scene and camera pose reconstruction, and global human motion estimation</strong>. Our training-free alignment method adds only about 4 ms/frame, while the overall inference reaches up to 10 FPS.</p>
+            <p>Human and scene foundation models offer complementary strengths for monocular 4D reconstruction: human models recover metric-scale body meshes but lack scene grounding, whereas scene models estimate globally consistent 3D geometry and camera motion without reliable metric scale. Crucially, both models reconstruct the same foreground human surface. Yet existing methods do not directly exploit this shared surface: lacking reliable foreground human geometry in scene reconstructions, earlier approaches either resort to sparse contact constraints or learn data-driven alignment modules that generalize poorly to out-of-distribution scenes. We present COHERE4D, a <strong>training-free</strong> framework that directly registers the human surfaces predicted by independently pretrained human and scene foundation models to reconstruct a <strong>coherent, metric</strong> 4D world. COHERE4D establishes dense, pixel-aligned 3D correspondences over the visible human surface and employs RANSAC with cross-frame consensus to suppress outliers from occlusion, background contamination, and depth noise. This formulation solves for two complementary geometric quantities: a sequence-level shared scale that calibrates scene geometry and camera motion to metric human size, and per-frame human translations that align camera-space human meshes with the scaled scene geometry to enforce spatial and temporal consistency. Across diverse backbones and benchmarks, COHERE4D substantially outperforms prior methods in <strong>human–scene alignment, metric scene and camera pose reconstruction, and global human motion estimation</strong>, adding only 4 ms/frame, enabling overall inference at up to 14 FPS.</p>
           </section>
 
           <section class="reconstruction-section" aria-labelledby="reconstruction-title">
@@ -411,7 +411,7 @@
             <h2 id="citation-title">Citation</h2>
             <!-- Placeholder: add publication metadata when available. -->
             <pre class="citation-code"><code>@misc{wang_cohere4d,
-  title  = {{COHERE4D: Training-Free Metric Alignment for Coherent 4D Human--Scene Reconstruction}},
+  title  = {{COHERE4D: Training-Free Dense Surface Alignment for Coherent Metric 4D Human--Scene Reconstruction}},
   author = {Wang, Zhumei and Wang, Shaofei and An, Xiang and Pei, Mingtao and Huang, Siyuan}
 }</code></pre>
           </section>

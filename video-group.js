@@ -105,7 +105,7 @@ class CohereVideoGroup extends EventTarget {
 
 // Require a stable, fully visible player before autoplay. Oversized players
 // qualify when they fill the available viewport, so small screens can play too.
-function observeCoherePlaybackVisibility(viewer, change) {
+function observeCoherePlaybackVisibility(viewer, change, options = {}) {
   let timer = 0, frame = 0, enabled = false;
   function qualifies() {
     const r = viewer.getBoundingClientRect();
@@ -113,9 +113,10 @@ function observeCoherePlaybackVisibility(viewer, change) {
     const visibleW = Math.max(0, Math.min(r.right, w) - Math.max(r.left, 0));
     const visibleH = Math.max(0, Math.min(r.bottom, h) - Math.max(r.top, 0));
     const fullscreen = document.fullscreenElement;
+    const fraction = options.visibleFraction ?? 1;
     return !document.hidden && r.width > 0 && r.height > 0 &&
       (!fullscreen || fullscreen.contains(viewer) || viewer.contains(fullscreen)) &&
-      visibleW >= Math.min(r.width, w) - 2 && visibleH >= Math.min(r.height, h) - 2;
+      visibleW >= Math.min(r.width, w) * fraction - 2 && visibleH >= Math.min(r.height, h) * fraction - 2;
   }
   function update() {
     frame = 0;
@@ -138,9 +139,18 @@ function observeCoherePlaybackVisibility(viewer, change) {
   new IntersectionObserver(schedule, {threshold: [0, 1]}).observe(viewer);
   change(false);
   update();
+  return {
+    activate() {
+      if (document.hidden) return;
+      clearTimeout(timer); timer = 0;
+      if (!enabled) { enabled = true; change(true); }
+    },
+  };
 }
 
 const cohereVideoGroups = new WeakMap();
+const cohereVisibilityControls = new WeakMap();
+function activateCohereCase(viewer) { cohereVisibilityControls.get(viewer)?.activate(); }
 // Native buffering preserves range requests and browser caching. This scheduler
 // provides priority hints; the browser ultimately controls active HTTP requests.
 const coherePreloader = (() => {
@@ -257,6 +267,7 @@ function bindCohereVideoControls(group, viewer, prefix) {
     const label = document.fullscreenElement === viewer ? 'Exit fullscreen' : 'Enter fullscreen';
     fullscreen.setAttribute('aria-label', label); fullscreen.title = label;
   });
-  observeCoherePlaybackVisibility(viewer, enabled => group.setEnabled(enabled));
+  cohereVisibilityControls.set(viewer, observeCoherePlaybackVisibility(viewer, enabled => group.setEnabled(enabled),
+    {visibleFraction: prefix === 'scene' ? .65 : 1}));
   update();
 }

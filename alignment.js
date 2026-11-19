@@ -77,13 +77,14 @@
     group.play();
   }
   thumbnails.forEach((button, index) => {
-    button.addEventListener('click', () => selectCase(index));
+    button.addEventListener('click', () => { selectCase(index); activateCohereCase(viewer); });
     button.addEventListener('keydown', event => {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
       event.preventDefault();
       const next = event.key === 'Home' ? 0 : event.key === 'End' ? thumbnails.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + thumbnails.length) % thumbnails.length;
       thumbnails[next].focus({preventScroll: true});
       selectCase(next);
+      activateCohereCase(viewer);
     });
   });
   loadCohereVideosWhenNear(viewer, () => {

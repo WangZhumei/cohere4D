@@ -144,7 +144,7 @@
       group.play();
     }
     thumbnails.forEach((button, index) => {
-      button.addEventListener('click', () => selectCase(index));
+      button.addEventListener('click', () => { selectCase(index); activateCohereCase(viewer); });
       button.addEventListener('keydown', event => {
         if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
         event.preventDefault();
@@ -152,6 +152,7 @@
         thumbnails[next].focus({preventScroll: true});
         thumbnails[next].scrollIntoView({block: 'nearest', inline: 'nearest'});
         selectCase(next);
+        activateCohereCase(viewer);
       });
     });
     loadCohereVideosWhenNear(viewer, () => { if (activeIndex < 0) selectCase(0); });
